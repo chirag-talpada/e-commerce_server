@@ -9,23 +9,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: DataTypes.STRING,
+      name: Sequelize.STRING,
       email: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         isEmail: true,
         unique: true,
       },
       password: {
-        type: DataTypes.TEXT,
+        type: Sequelize.TEXT,
       },
       phone: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         validate: {
           is: /^[0-9]{10}$/i,
         },
       },
       isdeleted: {
-        type: DataTypes.BOOLEAN,
+        type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
       createdAt: {
