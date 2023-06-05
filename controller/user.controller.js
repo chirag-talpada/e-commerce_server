@@ -1,4 +1,4 @@
-const { customers, Sequelize } = require("./../models/index");
+const { customers,cart, Sequelize } = require("./../models/index");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -44,8 +44,11 @@ const registerUser = async (req, res) => {
     };
 
     let data = await customers.create(newUser);
-
     delete newUser.password;
+
+    let cartData=await cart.create({
+      customer_id:data.id
+    });
 
     return res.status(201).json({
       status: "success",
