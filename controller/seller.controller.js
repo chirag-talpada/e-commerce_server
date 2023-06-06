@@ -41,6 +41,13 @@ const updateSeller = async (req, res) => {
       },
     });
 
+    if (data[0] === 0) {
+      return res.status(401).json({
+        status: "error",
+        message: "Seller Not found with this id!",
+      });
+    }
+
     return res.status(200).json({
       status: "success",
       message: "seller updated Successfully",

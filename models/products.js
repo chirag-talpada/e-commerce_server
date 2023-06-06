@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const product_category = require("./product_category");
 module.exports = (sequelize, DataTypes) => {
   class products extends Model {
     /**
@@ -10,19 +11,24 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       products.belongsToMany(models.cart, {
         through: models.cart_products,
+        foreignKey:'product_id'
       });
 
       products.belongsToMany(models.category, {
         through: models.product_category,
+        foreignKey:'product_id'
       });
 
       products.belongsToMany(models.seller, {
         through: models.seller_product,
+        foreignKey:'product_id'
       });
 
       products.belongsToMany(models.order, {
         through: models.order_product,
+        foreignKey:'product_id'
       });
+      
     }
   }
   products.init(

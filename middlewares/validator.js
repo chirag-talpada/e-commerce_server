@@ -15,8 +15,11 @@ module.exports = function (validator) {
     } catch (err) {
       //* Pass err to next
       //! If validation error occurs call next with HTTP 422. Otherwise HTTP 500
-      if (err.isJoi)
+      if (err.isJoi){
+        console.log(err);
         return res.status(400).send(JSON.stringify(err.details[0].message));
+      }
+
 
       next(createHttpError(500));
     }

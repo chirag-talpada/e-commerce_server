@@ -4,6 +4,8 @@ const app=express();
 const cloudinary=require('cloudinary');
 const cors=require('cors');
 
+const bodyParser = require('body-parser');
+
 const userRoutes=require('./routes/user.routes');
 const categoryRoutes=require('./routes/category.routes');
 const sellerRoutes=require('./routes/seller.routes');
@@ -18,7 +20,9 @@ cloudinary.v2.config({
     api_secret:process.env.API_SECRECT
 })
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+// app.use(express.json());
 app.use(cors());
 
 app.use('/api/',userRoutes);
