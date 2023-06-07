@@ -98,7 +98,8 @@ const loginUser = async (req, res) => {
       data: {
         token,
         name:userData.name,
-        email:userData.email
+        email:userData.email,
+        id:userData.id
       },
     });
     

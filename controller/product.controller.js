@@ -291,6 +291,9 @@ const getProduct = async (req, res) => {
       message: "Products fetched Successfully",
       data: data,
     });
+
+    
+
   } catch (err) {
     console.log(err);
     return res.status(500).send({
