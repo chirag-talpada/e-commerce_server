@@ -33,7 +33,9 @@ const addProductToCart = async (req, res) => {
       name: product.name,
       price: product.price,
       image_url: product.image_url,
-      quantity,
+      cart_products:{
+        quantity,
+      }
     };
 
     return res.status(201).json({
@@ -67,10 +69,9 @@ const getCartProducts = async (req, res) => {
       where: {
         customer_id: userID,
       },
-      
     });
 
-    const cartData=JSON.parse(JSON.stringify(cartProducts))
+    const cartData = JSON.parse(JSON.stringify(cartProducts));
 
     return res.status(201).json({
       status: "success",
@@ -85,4 +86,96 @@ const getCartProducts = async (req, res) => {
   }
 };
 
-module.exports = { addProductToCart, getCartProducts };
+const updateQuantity = async (req, res) => {
+  try {
+    const { product_id, userID, qty } = req.body;
+
+    const cartData = await cart.findOne({
+      where: {
+        customer_id: userID,
+      },
+      raw: true,
+    });
+
+    const updatedCart = await cart_products.update(
+      {
+        quantity: qty,
+      },
+      {
+        where: {
+          [Sequelize.Op.and]: {
+            cart_id: cartData.id,
+            product_id: product_id,
+          },
+        },
+      }
+    );
+
+    if(updatedCart[0]===0){
+      return res.status(404).json({
+        status: "error",
+        message: "Product not found in a Cart",
+        data: updatedCart,
+      });  
+    }
+    
+    return res.status(200).json({
+      status: "success",
+      message: "Cart updated",
+      data: updatedCart,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: "error",
+      message: "something went wrong!",
+    });
+  }
+};
+
+const deleteProduct =async (req,res) => {
+  try {
+    
+    const product_id=Number(req.params.id);
+    const { userID } = req.body;
+
+    const cartData = await cart.findOne({
+      where: {
+        customer_id: userID,
+      },
+      raw: true,
+    });
+    
+    const deletedCartProduct = await cart_products.destroy({
+      where: {
+        product_id,
+        cart_id:cartData.id
+      },
+    });
+
+    if (deletedCartProduct === 1) {
+      return res.status(200).json({
+        status: "success",
+        message: `Product removed successfully`,
+        data:product_id
+      });
+    }
+
+    return res.status(404).json({
+      status: "error",
+      message: `Product not found`,
+    });
+
+  } catch (err) {
+    return res.status(500).send({
+      status: "error",
+      message: "something went wrong!",
+    });
+  }
+};
+
+module.exports = {
+  addProductToCart,
+  getCartProducts,
+  updateQuantity,
+  deleteProduct,
+};

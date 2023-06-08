@@ -99,6 +99,7 @@ const loginUser = async (req, res) => {
         token,
         name:userData.name,
         email:userData.email,
+        phone:userData.phone,
         id:userData.id
       },
     });
