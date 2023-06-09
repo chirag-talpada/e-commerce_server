@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         through: models.cart_products,
         foreignKey: "cart_id",
       });
+
+      
     }
   }
   cart.init(
