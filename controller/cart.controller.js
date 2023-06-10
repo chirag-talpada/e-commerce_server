@@ -1,6 +1,7 @@
 const {
   cart,
   cart_products,
+  seller_product,
   products,
   Sequelize,
 } = require("./../models/index");
@@ -90,6 +91,24 @@ const updateQuantity = async (req, res) => {
   try {
     const { product_id, userID, qty } = req.body;
 
+    const available_qty=await seller_product.findOne({
+      attributes:['quantity_in_stock'],
+      where:{
+        product_id
+      },
+      raw:true
+    });
+
+    let remaining_qty=available_qty.quantity_in_stock-Number(qty);
+
+    if(remaining_qty<1){
+      return res.status(404).json({
+        status: "remove",
+        message: "Quantity not available, Out of Stock!",
+        data:product_id
+      });
+    }
+    
     const cartData = await cart.findOne({
       where: {
         customer_id: userID,
@@ -125,7 +144,9 @@ const updateQuantity = async (req, res) => {
       data: updatedCart,
     });
   } catch (err) {
-    return res.status(500).send({
+    console.log(err);
+    
+    return res.status(500).json({
       status: "error",
       message: "something went wrong!",
     });

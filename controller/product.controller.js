@@ -327,10 +327,18 @@ const getSingleProduct = async (req, res) => {
       ],
     });
 
+    if(data.length===0){
+      return res.status(404).json({
+        status: "error",
+        message: "Product not found",
+      });
+    }
+    
+
     return res.status(200).json({
       status: "success",
-      message: "Products fetched Successfully",
-      data: data,
+      message: "Product fetched Successfully",
+      data: data[0],
     });
   } catch (err) {
     console.log(err);
@@ -344,8 +352,22 @@ const getSingleProduct = async (req, res) => {
 const getProductByCategory = async (req, res) => {
   try {
     let category_name = req.params.name;
+
+    let categoryData=await category.findOne({
+      where:{
+        name:category_name
+      },
+      raw:true
+    });
+
+    if(categoryData===null){
+      return res.status(404).json({
+        status:'error',
+        message:'category not found'
+      })
+    }
     
-    let data = await products.findOne({
+    let data = await products.findAll({
       attributes: ["id", "name", "desc", "price", "image_url"],
       include: [
         {

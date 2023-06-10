@@ -93,7 +93,7 @@ const createOrder = async (req, res) => {
     console.log(err);
 
     await order_transaction.rollback();
-    return res.status(500).send({
+    return res.status(500).json({
       status: "error",
       message: "something went wrong!",
     });
@@ -127,12 +127,61 @@ const getOrders = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    
-    return res.status(500).send({
+
+    return res.status(500).json({
       status: "error",
       message: "something went wrong!",
     });
   }
 };
 
-module.exports = { createOrder, getOrders };
+const getOrderItems = async (req, res) => {
+  try {
+    const orderID = Number(req.params.id);
+    let { userID } = req.body;
+
+    const orderData = await order.findOne({
+      where: {
+        customer_id: userID,
+        id: orderID,
+      },
+      raw: true,
+    });
+
+    if (orderData === null) {
+      return res.status(403).json({
+        status: "error",
+        message: "order not found!",
+      });
+    }
+
+    const getOrderProducts = await order.findAll({
+      attributes: ["id"],
+      include: [
+        {
+          model: products,
+          attributes: ["id","price", "name", "image_url"],
+          through: { as: "order_product", attributes: ["quantity"] },
+        },
+      ],
+      where: {
+        id: orderID,
+      },
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Order Products fetched Successfully",
+      data: getOrderProducts[0].products,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      status: "error",
+      message: "something went wrong!",
+    });
+  }
+};
+
+module.exports = { createOrder, getOrders, getOrderItems };
