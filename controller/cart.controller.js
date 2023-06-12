@@ -23,6 +23,21 @@ const addProductToCart = async (req, res) => {
       },
     });
 
+    const available_qty=await seller_product.findOne({
+      attributes:['quantity_in_stock'],
+      where:{
+        product_id:id
+      },
+      raw:true
+    });
+
+    if(available_qty.quantity_in_stock-Number(quantity)<0){
+      return res.status(404).json({
+        status: "error",
+        message: "requested quentity not available",
+      });
+    }
+
     const cartProduct = await cart_products.create({
       cart_id: cartData.id,
       product_id: id,

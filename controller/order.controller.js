@@ -6,7 +6,7 @@ const {
   order,
   order_product,
   sequelize,
-  Sequelize,
+  seller_product,
 } = require("../models");
 
 const createOrder = async (req, res) => {
@@ -37,6 +37,48 @@ const createOrder = async (req, res) => {
         status: "error",
         message: "cart is empty",
       });
+    }
+
+    for (const item of cartItem.products) {
+      const available_qty = await seller_product.findOne({
+        attributes: ["quantity_in_stock"],
+        where: {
+          product_id: item.id,
+        },
+        raw: true,
+      });
+
+      if (
+        available_qty.quantity_in_stock - Number(item.cart_products.quantity) <
+        0
+      ) {
+        return res.status(404).json({
+          status: "error",
+          message: "one of the product not available",
+        });
+      }
+    }
+
+    for (const item of cartItem.products) {
+      const available_qty = await seller_product.findOne({
+        attributes: ["quantity_in_stock"],
+        where: {
+          product_id: item.id,
+        },
+        raw: true,
+      });
+
+      const update_qty = await seller_product.update(
+        {
+          quantity_in_stock:
+            available_qty.quantity_in_stock -
+            Number(item.cart_products.quantity),
+        },
+        {
+          where: {product_id: item.id,},
+          transaction: order_transaction,
+        }
+      );
     }
 
     const totalAmount = cartItem.products.reduce((cur, acc) => {
@@ -160,7 +202,7 @@ const getOrderItems = async (req, res) => {
       include: [
         {
           model: products,
-          attributes: ["id","price", "name", "image_url"],
+          attributes: ["id", "price", "name", "image_url"],
           through: { as: "order_product", attributes: ["quantity"] },
         },
       ],
