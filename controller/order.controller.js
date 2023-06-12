@@ -75,7 +75,7 @@ const createOrder = async (req, res) => {
             Number(item.cart_products.quantity),
         },
         {
-          where: {product_id: item.id,},
+          where: { product_id: item.id },
           transaction: order_transaction,
         }
       );
@@ -226,4 +226,30 @@ const getOrderItems = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getOrders, getOrderItems };
+const updateStatus = async (req, res) => {
+  try {
+    const { status, orderID } = req.body;
+
+    let update_status = await order.update(
+      {
+        status: status,
+      },
+      {
+        where: {id:orderID},
+      }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "order status updated successfully",
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "something went wrong!",
+    });
+  }
+};
+
+module.exports = { createOrder, getOrders, getOrderItems, updateStatus };

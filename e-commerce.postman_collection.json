@@ -611,6 +611,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "update order status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\":\"pending\",\n    \"orderID\":4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}order/update",
+							"host": [
+								"{{url}}order"
+							],
+							"path": [
+								"update"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
