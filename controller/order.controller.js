@@ -14,6 +14,7 @@ const createOrder = async (req, res) => {
 
   try {
     let { address, userID } = req.body;
+  
     address = JSON.stringify(address);
 
     const cartProducts = await cart.findAll({

@@ -538,7 +538,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"address1\":\"near bethal park\",\n    \"city\":\"Nadiad\",\n    \"state\":\"Gujarat\",\n    \"country\":\"India\",\n    \"pincode\":248584\n\n}",
+							"raw": "{\n    \"address\": {\n        \"address1\": \"near bethal park\",\n        \"city\": \"Nadiad\",\n        \"state\": \"Gujarat\",\n        \"country\": \"India\",\n        \"pincode\": 248584\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"

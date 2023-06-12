@@ -8,7 +8,7 @@ const {
 
 const addProductToCart = async (req, res) => {
   try {
-    const { id, quantity, userID } = req.body;
+    const { id, quantity, userID } = req.body;    
 
     const cartData = await cart.findOne({
       where: {
